@@ -1,3 +1,8 @@
+// Previo #10
+// Serrano Cuevas Ingrid Jazmín
+// Fecha de entrega: 19 de octubre de 2026
+// 319213197
+
 #include <iostream>
 #include <cmath>
 
@@ -42,7 +47,7 @@ bool keys[1024];
 bool firstMouse = true;
 // Light attributes
 glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
-bool active;
+bool active; // Activa o desactiva la animación
 
 // Positions of the point lights
 glm::vec3 pointLightPositions[] = {
@@ -100,8 +105,8 @@ float vertices[] = {
 
 glm::vec3 Light1 = glm::vec3(0);
 //Anim
-float rotBall = 0;
-bool AnimBall = false;
+float rotBall = 0; // Rotaciónn para mover la pelota
+bool AnimBall = false; // Activa o desactiva la animacion
 
 
 // Deltatime
@@ -120,7 +125,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion basica", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Previo 10 - Ingrid Serrano", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -190,6 +195,7 @@ int main()
 	while (!glfwWindowShouldClose(window))
 	{
 
+		// Velocidad de las animaciones
 		// Calculate deltatime of current frame
 		GLfloat currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -229,7 +235,7 @@ int main()
 		glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"),0.3f, 0.3f, 0.3f);
 
 
-		// Point light 1
+		// Point light 1 / Proceso que pasa la luz
 	    glm::vec3 lightColor;
 		lightColor.x= abs(sin(glfwGetTime() *Light1.x));
 		lightColor.y= abs(sin(glfwGetTime() *Light1.y));
@@ -428,7 +434,7 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 		active = !active;
 		if (active)
 		{
-			Light1 = glm::vec3(1.0f, 1.0f, 0.0f);
+			Light1 = glm::vec3(1.0f, 1.0f, 0.0f); // Representa el RGB
 			
 		}
 		else
@@ -446,7 +452,7 @@ void Animation() {
 	if (AnimBall)
 	{
 		rotBall += 0.2f;
-		//printf("%f", rotBall);
+		printf("%f", rotBall); // Imprime en consola
 	}
 	else
 	{
