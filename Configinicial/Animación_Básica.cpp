@@ -380,31 +380,31 @@ void DoMovement()
 
 	}
 
+	GLfloat lightSpeed = 2.0f * deltaTime;
+
 	if (keys[GLFW_KEY_T])
 	{
-		pointLightPositions[0].x += 0.01f;
+		pointLightPositions[0].x += lightSpeed;
 	}
 	if (keys[GLFW_KEY_G])
 	{
-		pointLightPositions[0].x -= 0.01f;
+		pointLightPositions[0].x -= lightSpeed;
 	}
-
 	if (keys[GLFW_KEY_Y])
 	{
-		pointLightPositions[0].y += 0.01f;
+		pointLightPositions[0].y += lightSpeed;
 	}
-
 	if (keys[GLFW_KEY_H])
 	{
-		pointLightPositions[0].y -= 0.01f;
+		pointLightPositions[0].y -= lightSpeed;
 	}
 	if (keys[GLFW_KEY_U])
 	{
-		pointLightPositions[0].z -= 0.1f;
+		pointLightPositions[0].z -= lightSpeed; 
 	}
 	if (keys[GLFW_KEY_J])
 	{
-		pointLightPositions[0].z += 0.01f;
+		pointLightPositions[0].z += lightSpeed;
 	}
 	
 }
@@ -451,7 +451,7 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 void Animation() {
 	if (AnimBall)
 	{
-		rotBall += 0.2f;
+		rotBall += 50.0f * deltaTime;
 		printf("%f", rotBall); // Imprime en consola
 	}
 	else
