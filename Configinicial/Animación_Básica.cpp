@@ -1,6 +1,6 @@
-// Previo #10
+// Práctica #10
 // Serrano Cuevas Ingrid Jazmín
-// Fecha de entrega: 19 de octubre de 2026
+// Fecha de entrega: 24 de octubre de 2026
 // 319213197
 
 #include <iostream>
@@ -106,7 +106,7 @@ float vertices[] = {
 glm::vec3 Light1 = glm::vec3(0);
 //Anim
 // float rotBall = 0; // Rotaciónn para mover la pelota
-
+float rotDog = 0.0f; // Ángulo de rotación del perro
 // Animación de la pelota (arriba y abajo)
 float movBallY = 0; // Altura inicial (aprox. la nariz del perro)
 bool ballSubiendo = true; // Controla si va hacia arriba o hacia abajo
@@ -130,7 +130,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Previo 10 - Ingrid Serrano", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Practica 10 - Ingrid Serrano", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -297,6 +297,11 @@ int main()
 		Piso.Draw(lightingShader);
 
 		model = glm::mat4(1);
+		// Primero rotar sobre el centro (eje Y)
+		model = glm::rotate(model, glm::radians(rotDog), glm::vec3(0.0f, 1.0f, 0.0f));
+		// Luego trasladar (alejar) al perro del centro
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f)); // En X representa el radio del círculo
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
 		Dog.Draw(lightingShader);
@@ -470,6 +475,14 @@ void Animation() {
 			if (movBallY <= -0.1f) { // Si llega a la altura de la nariz
 				ballSubiendo = true; // Cambia de dirección hacia arriba
 			}
+		}
+
+		// Velocidad de giro del perro
+		rotDog += 40.0f * deltaTime;
+
+		// Evitar que el número crezca infinitamente
+		if (rotDog >= 360.0f) {
+			rotDog -= 360.0f;
 		}
 	}
 	//if (AnimBall)
