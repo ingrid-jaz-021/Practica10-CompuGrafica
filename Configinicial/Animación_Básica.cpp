@@ -105,7 +105,12 @@ float vertices[] = {
 
 glm::vec3 Light1 = glm::vec3(0);
 //Anim
-float rotBall = 0; // Rotaciónn para mover la pelota
+// float rotBall = 0; // Rotaciónn para mover la pelota
+
+// Animación de la pelota (arriba y abajo)
+float movBallY = 0; // Altura inicial (aprox. la nariz del perro)
+bool ballSubiendo = true; // Controla si va hacia arriba o hacia abajo
+
 bool AnimBall = false; // Activa o desactiva la animacion
 
 
@@ -301,7 +306,8 @@ int main()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 1);
-		model = glm::rotate(model, glm::radians(rotBall), glm::vec3(0.0f, 1.0f, 0.0f));
+		//model = glm::rotate(model, glm::radians(rotBall), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, movBallY, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	    Ball.Draw(lightingShader); 
 		glDisable(GL_BLEND);  //Desactiva el canal alfa 
@@ -451,13 +457,30 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 void Animation() {
 	if (AnimBall)
 	{
-		rotBall += 50.0f * deltaTime;
-		printf("%f", rotBall); // Imprime en consola
+		float velocidad = 1.0f * deltaTime;
+
+		if (ballSubiendo) {
+			movBallY += velocidad;
+			if (movBallY >= 1.7f) { // Si llega a la altura de la luz
+				ballSubiendo = false; // Cambia de dirección hacia abajo
+			}
+		}
+		else {
+			movBallY -= velocidad;
+			if (movBallY <= -0.1f) { // Si llega a la altura de la nariz
+				ballSubiendo = true; // Cambia de dirección hacia arriba
+			}
+		}
 	}
-	else
-	{
-		//rotBall = 0.0f;
-	}
+	//if (AnimBall)
+	//{
+	//	rotBall += 50.0f * deltaTime;
+	//	printf("%f", rotBall); // Imprime en consola
+	//}
+	//else
+	//{
+	//	//rotBall = 0.0f;
+	//}
 }
 
 void MouseCallback(GLFWwindow *window, double xPos, double yPos)
