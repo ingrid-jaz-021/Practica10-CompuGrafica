@@ -105,8 +105,9 @@ float vertices[] = {
 
 glm::vec3 Light1 = glm::vec3(0);
 //Anim
-// float rotBall = 0; // Rotaciónn para mover la pelota
+//float rotBall = 0; // Rotaciónn para mover la pelota - Previo
 float rotDog = 0.0f; // Ángulo de rotación del perro
+float rotBallOrbit = 0.0f; // Rotación de la pelota
 // Animación de la pelota (arriba y abajo)
 float movBallY = 0; // Altura inicial (aprox. la nariz del perro)
 bool ballSubiendo = true; // Controla si va hacia arriba o hacia abajo
@@ -311,8 +312,11 @@ int main()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 1);
-		//model = glm::rotate(model, glm::radians(rotBall), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::translate(model, glm::vec3(0.0f, movBallY, 0.0f));
+		// Rota sobre el centro (eje Y) con el ángulo decreciente para ir en contra
+		model = glm::rotate(model, glm::radians(rotBallOrbit), glm::vec3(0.0f, 1.0f, 0.0f));
+		// Trasladar la pelota para definir su órbita y altura.
+		model = glm::translate(model, glm::vec3(2.0f, 1.0f, 0.0f));
+		//model = glm::rotate(model, glm::radians(rotBall), glm::vec3(0.0f, 1.0f, 0.0f)); // Previo
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	    Ball.Draw(lightingShader); 
 		glDisable(GL_BLEND);  //Desactiva el canal alfa 
@@ -464,26 +468,36 @@ void Animation() {
 	{
 		float velocidad = 1.0f * deltaTime;
 
-		if (ballSubiendo) {
-			movBallY += velocidad;
-			if (movBallY >= 1.7f) { // Si llega a la altura de la luz
-				ballSubiendo = false; // Cambia de dirección hacia abajo
-			}
-		}
-		else {
-			movBallY -= velocidad;
-			if (movBallY <= -0.1f) { // Si llega a la altura de la nariz
-				ballSubiendo = true; // Cambia de dirección hacia arriba
-			}
-		}
-
 		// Velocidad de giro del perro
 		rotDog += 40.0f * deltaTime;
 
-		// Evitar que el número crezca infinitamente
+		// Control para mantener el ángulo en un rango válido
 		if (rotDog >= 360.0f) {
 			rotDog -= 360.0f;
 		}
+
+		// Velocidad de giro de la pelota en dirección contraria
+		rotBallOrbit -= 40.0f * deltaTime;
+
+		// Control para mantener el ángulo en un rango válido
+		if (rotBallOrbit <= -360.0f) {
+			rotBallOrbit += 360.0f;
+		}
+
+		// Previo
+		//if (ballSubiendo) {
+		//	movBallY += velocidad;
+		//	if (movBallY >= 1.7f) { // Si llega a la altura de la luz
+		//		ballSubiendo = false; // Cambia de dirección hacia abajo
+		//	}
+		//}
+		//else {
+		//	movBallY -= velocidad;
+		//	if (movBallY <= -0.1f) { // Si llega a la altura de la nariz
+		//		ballSubiendo = true; // Cambia de dirección hacia arriba
+		//	}
+		//}
+		
 	}
 	//if (AnimBall)
 	//{
