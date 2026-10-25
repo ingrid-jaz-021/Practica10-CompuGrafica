@@ -111,6 +111,9 @@ float rotBallOrbit = 0.0f; // Rotación de la pelota
 // Animación de la pelota (arriba y abajo)
 float movBallY = 0; // Altura inicial (aprox. la nariz del perro)
 bool ballSubiendo = true; // Controla si va hacia arriba o hacia abajo
+float dogY = 0.0f;  // Altura normal del perro en el piso
+float ballY = 1.0f; // Altura normal de la pelota orbitando
+bool estanJugando = false; // Bandera para saber si están cruzándose
 
 bool AnimBall = false; // Activa o desactiva la animacion
 
@@ -301,7 +304,7 @@ int main()
 		// Primero rotar sobre el centro (eje Y)
 		model = glm::rotate(model, glm::radians(rotDog), glm::vec3(0.0f, 1.0f, 0.0f));
 		// Luego trasladar (alejar) al perro del centro
-		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f)); // En X representa el radio del círculo
+		model = glm::translate(model, glm::vec3(2.0f, dogY, 0.0f)); // En X representa el radio del círculo
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
@@ -315,7 +318,7 @@ int main()
 		// Rota sobre el centro (eje Y) con el ángulo decreciente para ir en contra
 		model = glm::rotate(model, glm::radians(rotBallOrbit), glm::vec3(0.0f, 1.0f, 0.0f));
 		// Trasladar la pelota para definir su órbita y altura.
-		model = glm::translate(model, glm::vec3(2.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(2.0f, ballY, 0.0f));
 		//model = glm::rotate(model, glm::radians(rotBall), glm::vec3(0.0f, 1.0f, 0.0f)); // Previo
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	    Ball.Draw(lightingShader); 
@@ -484,6 +487,44 @@ void Animation() {
 			rotBallOrbit += 360.0f;
 		}
 
+		// Calcular la distancia entre la narriz y la pelota
+		float anguloPerro = rotDog;
+		float anguloPelota = rotBallOrbit;
+		float anguloNariz = anguloPerro + 30.0f; 
+
+		while (anguloPelota < 0.0f) {
+			anguloPelota += 360.0f;
+		}
+
+		while (anguloNariz >= 360.0f) {
+			anguloNariz -= 360.0f;
+		}
+		while (anguloNariz < 0.0f) {
+			anguloNariz += 360.0f;
+		}
+
+		float diferencia = abs(anguloNariz - anguloPelota);
+		// Evaluar si están cruzándose
+		if (diferencia < 15.0f || diferencia > 345.0f) {
+			estanJugando = true;
+		}
+		else {
+			estanJugando = false;
+		}
+
+		// Velocidad del salto
+		float velocidadSalto = 3.0f * deltaTime;
+
+		if (estanJugando) {
+			// Si se están cruzando, el perro sube hasta 0.5 y la pelota baja hasta 0.5
+			if (dogY < 0.4f) dogY += velocidadSalto;
+			if (ballY > 0.5f) ballY -= velocidadSalto;
+		}
+		else {
+			// Si ya no se están cruzando, regresan suavemente a su posición original
+			if (dogY > 0.0f) dogY -= velocidadSalto;
+			if (ballY < 1.0f) ballY += velocidadSalto;
+		}
 		// Previo
 		//if (ballSubiendo) {
 		//	movBallY += velocidad;
